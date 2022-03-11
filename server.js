@@ -4,10 +4,16 @@ const {
     MongoClient,
     ServerApiVersion
 } = require('mongodb');
+const cors = require('cors');
+const {
+    Server
+} = require("socket.io");
 
 const uri = "mongodb+srv://lbox01:Hellou%32y%21@cluster0.jghso.mongodb.net/star%2Dwars%2Dquotes?retryWrites=true&w=majority";
 
-const { LocalStorage } = require('node-localstorage'),
+const {
+    LocalStorage
+} = require('node-localstorage'),
     localStorage = new LocalStorage('./scratch');
 
 const userNotVoted = localStorage.getItem('best_muscle_car_vote');
@@ -20,6 +26,23 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
+app.use(cors());
+
+const httpServer = require('http').createServer(app);
+const io = new Server(httpServer);
+const message = '';
+
+httpServer.listen(3000, () => {
+    console.log('Sockets are listening...')
+});
+
+io.on('connection', (socket) => {
+    console.log('User connnected: ' + socket.id);
+
+    socket.on('results', (data) => {
+        socket.broadcast.emit('results', data);
+    });
+});
 
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
@@ -28,11 +51,8 @@ const client = new MongoClient(uri, {
 });
 
 client.connect(() => {
-    const collection = client.db('classic-cars').collection('muscle-cars');
 
-    app.listen(3000, () => {
-        console.log('MongoDB is connected.\nExpress server is running');
-    });
+    const collection = client.db('classic-cars').collection('muscle-cars');
 
     app.get('/vote/:itemId', (req, res) => {
         collection.updateOne({
@@ -52,6 +72,7 @@ client.connect(() => {
                             notVoted: false
                         })
                     })
+                    .then()
             })
             .catch(error => console.error(error));
     });
@@ -65,4 +86,8 @@ client.connect(() => {
                 })
             })
     })
+
+    //app.listen(3000, () => {
+        console.log('MongoDB is connected...\nExpress server is running');
+    //});
 });
