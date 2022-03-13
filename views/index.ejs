@@ -29,7 +29,7 @@
             </div>
             <div class="row">
                 <% candidates.forEach((candidate)=> {
-                    candidateId = candidate.itemId;%>
+                    id = candidate.id;%>
                     <form id="photo_container" class="photo_container card col-md-4 p-3">
                         <img src="<%= candidate.srcUrl %>" alt="<%= candidate.altText %>" class="photo card-img-top">
                         <h4 class="photo_name card-title my-3">
@@ -38,14 +38,14 @@
 
                         <% if (notVoted) { %>
                             <a class="btn btn-primary vote_btn" type="button"
-                                href="/vote/<%= candidate.itemId %>">Vote</a>
+                                href="/vote/<%= candidate.id %>">Vote</a>
                             <% } else { %>
                                 <h5 class="votes_results text-center card-subtitle mb-2 text-muted"
-                                data-car="<%= candidate.itemId %>">
+                                data-car="<%= candidate.id %>">
                                     <%= candidate.votes %> out of <%= total %> votes
                                 </h5>
                                 <script>
-                                    socket.emit('results', '<%= candidate.itemId %>,<%= candidate.votes %> out of <%= total %> votes');
+                                    socket.emit('results', '<%= candidate.id %>,<%= candidate.votes %> out of <%= total %> votes');
                                 </script>
                                 <% } %>
                     </form>
