@@ -1,4 +1,5 @@
 const users = require('../models/user_model');
+const passport = require('passport');
 
 // Display the index of Users.
 exports.user_index = (req, res) => {
@@ -36,12 +37,12 @@ exports.user_create_get = (req, res) => {
 // Handle User create on POST.
 exports.user_create_post = (req, res) => {
     const name = req.body.name;
-    const srcUrl = req.body.srcUrl;
-    const altText = name + ' photo';
+    const email = req.body.email;
+    const password = req.body.email;
     let user = {
         name,
-        srcUrl,
-        altText
+        email,
+        password
     };
     user.save()
         .then(results => {
@@ -82,9 +83,9 @@ exports.user_update_post = (req, res) => {
         }, {
             name: req.body.name
         }, {
-            srcUrl: req.body.srcUrl
+            srcUrl: req.body.email
         }, {
-            altText: req.body.name + ' photo'
+            altText: req.body.password
         }, {
             upsert: true
         })
