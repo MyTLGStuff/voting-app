@@ -6,7 +6,10 @@ exports.candidate_index = (req, res) => {
         .then(results => {
             res.render('./candidate/index', {
                 title: 'Candidate Index',
-                candidate_index: results,
+                oidc: req.oidc.user,
+                candidates: results,
+                isAuthenticated: req.oidc.isAuthenticated(),
+                voteTime: null,
             });
         })
         .catch(err => console.error(err));
@@ -20,7 +23,10 @@ exports.candidate_detail = (req, res) => {
         .then(detail_candidate => {
             res.render('./candidate/detail', {
                 title: detail_candidate.name + ' Detail',
+                oidc: req.oidc.user,
                 candidate_detail: detail_candidate,
+                isAuthenticated: req.oidc.isAuthenticated(),
+                voteTime: null,
             });
         })
         .catch(err => console.error(err));
@@ -30,6 +36,9 @@ exports.candidate_detail = (req, res) => {
 exports.candidate_create_get = (req, res) => {
     res.render('./candidate/create', {
         title: 'Create Candidate',
+        oidc: req.oidc.user,
+        isAuthenticated: req.oidc.isAuthenticated(),
+        voteTime: null,
     });
 };
 
@@ -43,14 +52,8 @@ exports.candidate_create_post = (req, res) => {
         srcUrl,
         altText
     };
-    candidate.save()
-        .then(results => {
-            res.redirect('./candidate/index', {
-                    candidates: results,
-                    message: 'New candidate added'
-                })
-                .catch(err => console.error(err));
-        });
+    candidates.create(candidate)
+    res.redirect('/');
 };
 
 // Handle Candidate delete on POST.
@@ -70,7 +73,10 @@ exports.candidate_update_get = (req, res) => {
         .then(result => {
             res.render('./candidate/update', {
                 title: 'Update ' + result.name,
+                oidc: req.oidc.user,
                 candidate: result,
+                isAuthenticated: req.oidc.isAuthenticated(),
+                voteTime: null,
             });
         });
 };
@@ -93,8 +99,11 @@ exports.candidate_update_post = (req, res) => {
             candidates.findById(req.params.id)
                 .then(result => {
                     res.render('./candidate/update', {
+                        isAuthenticated: req.oidc.isAuthenticated(),
+                        oidc: req.oidc.user,
                         candidate: result,
-                        notVoted: false
+                        notVoted: false,
+                        voteTime: null,
                     })
                 })
         })
