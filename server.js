@@ -3,7 +3,11 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const appRouter = require('./routes/pages');
+const routes = require('./routes/routes');
+const candidate_routes = require('./routes/candidate_routes');
+const {
+    auth
+} = require('express-openid-connect');
 const {
     ServerApiVersion
 } = require('mongodb');
@@ -11,7 +15,20 @@ const cors = require('cors');
 const {
     Server
 } = require("socket.io");
+const { process_params } = require('express/lib/router');
 require('dotenv').config();
+
+
+// Auth0 Configuration
+const config = {
+    authRequired: false,
+    auth0Logout: true,
+    secret: process.env.SESSION_SECRET,
+    baseURL: 'http://localhost:3000',
+    clientID: process.env.CLIENT_ID,
+    issuerBaseURL: process.env.ISSUER
+};
+
 
 // middleware applications
 const app = express();
@@ -22,21 +39,14 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use('/', appRouter);
-
-// extra for testing
-const candidate_routes = require('./routes/candidate_routes');
-const user_routes = require('./routes/user_routes');
+app.use(auth(config));
+app.use('/', routes);
 app.use('/candidate', candidate_routes);
-app.use('/user', user_routes);
+
 
 // socket.io instantiation
-const httpServer = require('http').createServer(app);
-const io = new Server(httpServer);
-const message = '';
-httpServer.listen(3000, () => {
-    console.log('Sockets are listening...')
-});
+const server = require('http').createServer(app);
+const io = new Server(server);
 
 // socket.io controller
 io.on('connection', (socket) => {
@@ -49,12 +59,16 @@ io.on('connection', (socket) => {
 
 // mongoose instance of mongodb
 mongoose
-.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverApi: ServerApiVersion.v1
-})
-.then(console.log('MongoDB is connected...'))
-.catch(err => console.error(err))
+    .connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        serverApi: ServerApiVersion.v1
+    })
+    .then(console.log('MongoDB is connected...'))
+    .catch(err => console.error(err))
+
+server.listen(process.env.PORT, () => {
+    console.log('Sockets are listening...')
+});
 
 console.log('Express server is running!');

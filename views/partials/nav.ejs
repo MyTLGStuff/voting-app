@@ -1,0 +1,57 @@
+<body>
+    <nav class="navbar sticky-top navbar-dark bg-dark">
+        <div class="container-fluid">
+            <% if (!isAuthenticated) { %>
+                <span class="navbar-brand">
+                    <img src="https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png"
+                        height="35" alt="placeholder photo">
+                    <a class="navbar-brand" href="/">Vote for...</a>
+                </span>
+                <% } else { %>
+                    <span class="navbar-brand">
+                        <img src="<%= oidc.picture %>" height="35" alt="<%= oidc.nickname %>">
+                        <a class="navbar-brand" href="/">
+                            <%= oidc.nickname %>
+                        </a>
+                    </span>
+                   
+                    <p id="countdown"></p>
+                    
+                    <% } %>
+                        <ul class="navbar-nav">
+                            <% if (!isAuthenticated) { %>
+                                <li class="nav-item"><a href="/login/" class="nav-link">Login</a></li>
+                                <% } else { %>
+                                    <li class="nav-item mx-3"><a href="/" class="nav-link">Home</a></li>
+                                    <li class="nav-item mx-3"><a href="/candidate/create" class="nav-link">Create</a></li>
+                                    <li class="nav-item mx-3"><a href="/candidate" class="nav-link">Modify</a></li>
+                                    <li class="nav-item mx-3"><a href="/logout/" class="nav-link">Logout</a></li>
+                                <% } %>
+                        </ul>
+        </div>
+    </nav>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script>
+        const isAuthenticated = "<%= isAuthenticated %>";
+        const voteTime = "<%= voteTime %>"
+        if (voteTime === '') {
+            document.getElementById('countdown').innerHTML = ''
+        } else {
+            if (isAuthenticated) {
+                const myInterval = setInterval(() => {
+                    const time = moment.duration(moment(voteTime).diff(moment()));
+                    const minutes = time.minutes();
+                    const seconds = time.seconds();
+                    const nano = moment(voteTime).diff(moment())
+
+                    document.getElementById('countdown').innerHTML = minutes + ' minutes  ' + seconds + ' seconds';
+                    if (nano < 0) {
+                        clearInterval(myInterval);
+                        document.getElementById('countdown').innerHTML = 'Time to vote!';
+                        document.getElementsByClassName('votes_results').style.display = 'none';
+                        document.getElementsByClassName('vote_btn').style.display = 'block';
+                    }
+                }, 1000);
+            }
+        }
+    </script>

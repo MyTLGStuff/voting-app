@@ -6,6 +6,22 @@ body {
     background-size: cover;
 }
 
+#countdown {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding-top: .5rem;
+}
+
+.navbar-nav {
+    flex-direction: row !important;
+}
+
+.message {
+    background-color: green;
+    color: white;
+}
+
 .title {
     background-color: rgb(0,0,0, .4);
     color: #ffffff;

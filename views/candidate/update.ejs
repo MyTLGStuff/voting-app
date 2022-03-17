@@ -1,0 +1,23 @@
+<%- include('../partials/head.ejs') %>
+<%- include('../partials/nav.ejs') %>
+
+    <div class="container-fluid">
+        <div class="row mt-5">
+            <form class="col-md-6 offset-md-3 card shadow mt-5" method="post" action="update">
+                <h2 class="text-center mt-5">Update <%= candidate.name %></h2>
+                <h5 class="text-center mb-5">(You must be the creator to delete this candidate)</h5>
+                <div class="form-floating mb-3">
+                    <input name="name" type="text" class="form-control" id="floatingName" placeholder="Name" value="<%= candidate.name %>">
+                    <label for="floatingName">Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input name="srcUrl" type="text" class="form-control" id="floatingPhotoUrl"
+                        placeholder="Photo Url" value="<%= candidate.srcUrl %>">
+                    <label for="floatingPhotoUrl">PhotoUrl</label>
+                </div>
+                <button type="submit" class="btn btn-primary mb-5">Update</button>
+            </form>
+        </div>
+    </div>
+
+<%- include('../partials/footer.ejs') %>

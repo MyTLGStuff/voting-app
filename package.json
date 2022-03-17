@@ -12,7 +12,7 @@
     "url": "git+https://github.com/lfbox7/voting-app.git"
   },
   "author": "Leonard Box",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/lfbox7/voting-app/issues"
   },
@@ -23,6 +23,9 @@
     "dotenv": "^16.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.3",
+    "express-openid-connect": "^2.7.1",
+    "method-override": "^3.0.0",
+    "moment": "^2.29.1",
     "mongodb": "^4.4.1",
     "mongoose": "^6.2.5",
     "path": "^0.12.7",

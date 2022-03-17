@@ -8,7 +8,13 @@ const user = new Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
+    },
+    voted: {
+        type: Date,
+        default: Date.now
     }
-})
+});
+
 module.exports = mongoose.model('users', user);

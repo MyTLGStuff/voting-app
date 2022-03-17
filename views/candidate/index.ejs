@@ -1,12 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Candidate Index</h1>
-</body>
-</html>
+<%- include('../partials/head.ejs') %>
+    <%- include('../partials/nav.ejs') %>
+
+        <h1>Candidate Index</h1>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <% candidates.forEach((candidate)=> { %>
+                        <div class="container card shadow g-0 mb-3">
+                            <div class="row g-0">
+                                <div class="col-md-4 g-0">
+                                    <img class="img-fluid rounded-start" src="<%= candidate.srcUrl %>"
+                                        alt="<%= candidate.altText %>">
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card-body">
+                                        <h3 class="card-title text-center align-middle">
+                                            <%= candidate.name %>
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card-body">
+                                        <a class="btn btn-warning" type="button" href="/candidate/<%= candidate.id %>/update"v>Update</a>
+                                        <a class="btn btn-danger" type="button" href="/candidate/<%= candidate.id %>/delete">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../partials/footer.ejs') %>
