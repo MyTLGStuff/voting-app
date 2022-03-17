@@ -32,7 +32,7 @@ exports.vote = (req, res) => {
             }, {
                 voted: votedDate,
                 new: true
-            }, (err, doc) => {
+            }, (err) => {
                 if (err) {
                     console.error(err);
                 }
@@ -46,20 +46,12 @@ exports.vote = (req, res) => {
             votes: 1
         },
         new: true
-    }, (err, doc) => {
+    }, (err) => {
         if (err) {
             console.error(err);
         }
     })
-    candidates.find()
-        .then(results => {
-            users.findOne({
-                    email: email
-                })
-                .then(user => {
-                    res.redirect('/')
-                });
-        })
+    res.redirect('/')
 };
 
 // retreive all candidates

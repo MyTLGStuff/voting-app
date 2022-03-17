@@ -47,28 +47,58 @@ exports.candidate_create_post = (req, res) => {
     const name = req.body.name;
     const srcUrl = req.body.srcUrl;
     const altText = name + ' photo';
+    const user = req.oidc.user.email;
     let candidate = {
         name,
         srcUrl,
-        altText
+        altText,
+        user
     };
     candidates.create(candidate)
-    res.redirect('/');
+    res.redirect('./');
+};
+
+// Display Candidate delete form on GET.
+exports.candidate_delete_get = (req, res) => {
+    candidates.findById(req.params.id)
+        .then(result => {
+            res.render('./candidate/delete', {
+                title: 'Delete ' + result.name,
+                oidc: req.oidc.user,
+                candidate: result,
+                isAuthenticated: req.oidc.isAuthenticated(),
+                voteTime: null,
+            });
+        });
 };
 
 // Handle Candidate delete on POST.
 exports.candidate_delete_post = (req, res) => {
-    candidates.findByIdAndDelete(req.params.id)
-        .then(results => {
-            res.json({
-                redirect: './candidate/index',
+    candidates.findOne({
+        _id: req.params.id
+    }, (err, doc) => {
+        if (err) {
+            console.error(err);
+        }
+        if (doc.createdBy === req.oidc.user.email) {
+            candidates.findOneAndDelete({
+                _id: req.params.id,
+            }, (err) => {
+                if (err) {
+                    console.error(err)
+                }
+
             });
-        })
-        .catch(error => console.error(error));
+            res.redirect('/candidate/')
+        } else {
+            res.redirect('/candidate/' + req.params.id + '/delete')
+        }
+    })
 };
 
 // Display Candidate update form on GET.
 exports.candidate_update_get = (req, res) => {
+    console.log(req.params.createdBy)
     candidates.findById(req.params.id)
         .then(result => {
             res.render('./candidate/update', {
@@ -83,29 +113,29 @@ exports.candidate_update_get = (req, res) => {
 
 // Handle candidate update on POST.
 exports.candidate_update_post = (req, res) => {
-    candidates.findByIdAndUpdate({
-            _id: req.params.id
-        }, {
-            name: req.body.name
-        }, {
-            srcUrl: req.body.srcUrl
-        }, {
-            altText: req.body.name + ' photo'
-        }, {
-            upsert: true
-        })
-        .then(result => {
-            console.log(result);
-            candidates.findById(req.params.id)
-                .then(result => {
-                    res.render('./candidate/update', {
-                        isAuthenticated: req.oidc.isAuthenticated(),
-                        oidc: req.oidc.user,
-                        candidate: result,
-                        notVoted: false,
-                        voteTime: null,
-                    })
-                })
-        })
-        .catch(error => console.error(error));
+    candidates.findOne({
+        _id: req.params.id
+    }, (err, doc) => {
+        if (err) {
+            console.error(err);
+        }
+        if (doc.createdBy === req.oidc.user.email) {
+            candidates.findByIdAndUpdate({
+                _id: req.params.id,
+            }, {
+                name: req.body.name,
+                srcUrl: req.body.srcUrl,
+                altText: req.body.name + ' photo'
+            }, {
+                upsert: true
+            }, (err) => {
+                if (err) {
+                    console.error(err)
+                }
+            })
+            res.redirect('/candidate/')
+        } else {
+            res.redirect('/candidate/' + req.params.id + '/update')
+        }
+    })
 };

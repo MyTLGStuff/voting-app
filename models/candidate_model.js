@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const user_model = require('./user_model');
 const Schema = mongoose.Schema;
 
 const candidate = new Schema({
@@ -17,6 +18,10 @@ const candidate = new Schema({
     votes: {
         type: Number,
         default: 0
+    },
+    createdBy: {
+        type: String,
+        required: true
     }
 })
 module.exports = mongoose.model('muscle-cars', candidate);
